@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Mon Assistant Codes - Accueil</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animation des particules en arrière-plan */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: float 8s infinite ease-in-out;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.5;
+    }
+    90% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Conteneur principal */
+.container-main {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 20px;
+}
+
+/* Carte principale */
+.welcome-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 32px;
+    padding: 40px 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    animation: fadeInUp 0.8s ease-out;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Icône animée */
+.animated-icon {
+    font-size: 70px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: pulse 2s infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+/* Titre */
+.main-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 15px;
+}
+
+/* Texte de bienvenue */
+.welcome-text {
+    color: #6c757d;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Boutons */
+.btn-custom {
+    border-radius: 50px;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-custom:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-custom:active {
+    transform: translateY(0);
+}
+
+.btn-article {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: white;
+}
+
+.btn-balance {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+}
+
+.btn-article i, .btn-balance i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+/* Effet de survol des cartes de boutons */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+}
+
+/* Footer */
+.custom-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    padding: 12px;
+    font-size: 0.85rem;
+    z-index: 10;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.custom-footer strong {
+    color: #ffd700;
+    font-weight: 600;
+}
+
+/* Animation de chargement du texte */
+.typing-text {
+    overflow: hidden;
+    border-right: 3px solid #667eea;
+    white-space: nowrap;
+    animation: typing 2s steps(30, end);
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        width: 100%;
+        opacity: 1;
+    }
+}
+
+/* Responsive pour très petits écrans */
+@media (max-width: 480px) {
+    .welcome-card {
+        padding: 30px 20px;
+    }
+    
+    .main-title {
+        font-size: 1.6rem;
+    }
+    
+    .btn-custom {
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+    
+    .animated-icon {
+        font-size: 55px;
+    }
+    
+    .custom-footer {
+        font-size: 0.7rem;
+        padding: 8px;
+    }
+}
+
+/* Animation d'entrée des boutons */
+.btn-article {
+    animation: slideInLeft 0.6s ease-out 0.3s both;
+}
+
+.btn-balance {
+    animation: slideInRight 0.6s ease-out 0.5s both;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Effet de brillance sur les boutons */
+.btn-custom {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-custom::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+    20%, 100% {
+        transform: translateX(100%) rotate(45deg);
+    }
+}
+
+/* Badge nouveau */
+.badge-new {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ff4757;
+    color: white;
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Effet de glassmorphism sur la carte */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+</style>
+</head>
+<body>
+
+<!-- Particules animées en arrière-plan -->
+<div class="particles" id="particles"></div>
+
+<div class="container-main">
+    <div class="welcome-card glass-effect">
+        <div class="text-center">
+            <!-- Icône animée -->
+            <div class="animated-icon">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            
+            <!-- Titre avec animation typing -->
+            <h1 class="main-title typing-text">Mon Assistant Codes</h1>
+            
+            <!-- Message de bienvenue -->
+            <p class="welcome-text">
+                <i class="fa-regular fa-hand-peace me-2"></i>
+                Bienvenue ! Gérez facilement vos codes articles et codes balance (PLU) en quelques clics.
+            </p>
+            
+            <!-- Ligne décorative -->
+            <div class="d-flex justify-content-center gap-2 mb-4">
+                <span class="badge bg-success rounded-pill">✓ Rapide</span>
+                <span class="badge bg-info rounded-pill">✓ Simple</span>
+                <span class="badge bg-warning rounded-pill">✓ Efficace</span>
+            </div>
+            
+            <!-- Boutons -->
+            <div class="d-grid gap-3">
+                <div class="position-relative">
+                    <a href="ca.html" class="btn btn-custom btn-article w-100">
+                        <i class="fa-solid fa-box-open"></i>
+                        Recherche Code Article
+                    </a>
+                </div>
+                
+                <div class="position-relative">
+                    <a href="cb.html" class="btn btn-custom btn-balance w-100">
+                        <i class="fa-solid fa-apple-whole"></i>
+                        Recherche Code Balance (PLU)
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Petit message d'information -->
+            <div class="mt-4 pt-3 border-top">
+                <small class="text-muted">
+                    <i class="fa-regular fa-clock me-1"></i>
+                    Accès direct à vos outils de recherche
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="custom-footer">
+    <i class="fa-regular fa-copyright me-1"></i> Application développée par : <strong>M.Seddik ELidrissi</strong>
+</footer>
+
+<script>
+// Génération des particules animées
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 50;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Taille aléatoire
+        const size = Math.random() * 8 + 2;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        
+        // Position aléatoire
+        particle.style.left = Math.random() * 100 + '%';
+        
+        // Durée d'animation aléatoire
+        const duration = Math.random() * 10 + 5;
+        particle.style.animationDuration = duration + 's';
+        
+        // Délai aléatoire
+        const delay = Math.random() * 5;
+        particle.style.animationDelay = delay + 's';
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Animation d'entrée avec SweetAlert2 au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    createParticles();
+    
+    // Petite animation de bienvenue avec Swal2 (optionnelle)
+    setTimeout(() => {
+        Swal.fire({
+            title: 'Bienvenue !',
+            text: 'Choisissez l\'outil qui correspond à votre besoin',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: '#ffffff',
+            iconColor: '#38ef7d'
+        });
+    }, 500);
+});
+
+// Effet de clic sur les boutons
+document.querySelectorAll('.btn-custom').forEach(button => {
+    button.addEventListener('click', function(e) {
+        // Effet de ripple
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+
+// Ajout du style pour l'effet ripple
+const style = document.createElement('style');
+style.textContent = `
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .btn-custom {
+        position: relative;
+        overflow: hidden;
+    }
+`;
+document.head.appendChild(style);
+
+// Vérifier si les fichiers ca.html et cb.html existent
+// (optionnel : afficher un message si les fichiers ne sont pas trouvés)
+document.querySelector('a[href="ca.html"]').addEventListener('click', function(e) {
+    // Simple vérification - les navigateurs gèrent déjà l'erreur 404
+    console.log('Navigation vers Mon Assistant Codes Article');
+});
+
+document.querySelector('a[href="cb.html"]').addEventListener('click', function(e) {
+    console.log('Navigation vers Mon Assistant Codes Balance');
+});
+</script>
+
+</body>
+</html>

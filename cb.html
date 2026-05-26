@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Assistant Balance</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+body{
+    background:linear-gradient(135deg,#198754,#20c997);
+    padding-bottom:70px;
+    min-height: 100vh;
+}
+.menu-btn{
+    height:65px;
+    font-size:18px;
+    border-radius:15px;
+}
+.table th{
+    background:#198754;
+    color:white;
+}
+footer{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#000;
+    color:#fff;
+    text-align:center;
+    padding:10px;
+    font-size:14px;
+    z-index: 10;
+}
+.loading-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    flex-direction: column;
+    display: none;
+}
+
+#profileSelectionScreen {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.welcome-content {
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.offcanvas.offcanvas-top {
+    height: 100vh !important;
+    border-bottom: none !important;
+    background: #ffffff;
+    color: #212529;
+}
+.offcanvas-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.offcanvas-body {
+    padding: 25px;
+}
+
+.custom-swal-popup {
+    background: rgba(20, 30, 25, 0.96) !important;
+    border: 2px solid #20c997 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+}
+.custom-swal-title {
+    color: #ffffff !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold !important;
+}
+.custom-swal-input {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid #198754 !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    font-size: 18px !important;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.custom-swal-input:focus {
+    border-color: #20c997 !important;
+    box-shadow: 0 0 10px rgba(32, 201, 151, 0.5) !important;
+}
+.custom-swal-confirm {
+    background-color: #198754 !important;
+    border-radius: 10px !important;
+    padding: 10px 25px !important;
+    font-weight: bold;
+}
+.custom-swal-cancel {
+    background-color: #dc3545 !important;
+    border-radius: 10px !important;
+    padding: 10px 25px !important;
+}
+
+/* Style pour le message de profil connecté */
+.profile-status {
+    margin-top: 25px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(5px);
+}
+.profile-status i {
+    margin-right: 8px;
+}
+.profile-status span {
+    font-weight: bold;
+    color: #ffd700;
+}
+.profile-status .admin-badge {
+    background: #ffd700;
+    color: #198754;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+.profile-status .user-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner-border text-light mb-2" role="status"></div>
+    <h5>Chargement... veuillez patienter</h5>
+</div>
+
+<div class="container py-5 text-center" id="profileSelectionScreen" style="display: none;">
+    <div class="welcome-content text-white">
+        <i class="fa-solid fa-apple-whole fa-5x mb-4 text-white"></i>
+        <h1 class="fw-bold mb-3">Mon Assistant Balance</h1>
+        <p class="fs-5 mb-5 opacity-90">Votre outil cloud de centralisation et gestion des codes balance (PLU) en temps réel.</p>
+        
+        <h5 class="mb-3 text-white p-2 rounded" style="background: rgba(0,0,0,0.15);">Veuillez choisir votre profil :</h5>
+        <div class="d-grid gap-3">
+            <button type="button" class="btn btn-light btn-lg rounded-pill fw-bold py-3 text-success shadow" onclick="choisirProfil('user')">
+                <i class="fa fa-user me-2"></i> Utilisateur
+            </button>
+            <button type="button" class="btn btn-dark btn-lg rounded-pill fw-bold py-3 text-white shadow" onclick="choisirProfil('admin')">
+                <i class="fa fa-user-shield me-2"></i> Administrateur
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 text-center" id="mainApplicationScreen" style="display: none;">
+
+    <h2 class="text-white mb-4">
+        <i class="fa-solid fa-apple-whole"></i>
+        Mon Assistant Balance
+    </h2>
+
+    <div class="row g-3">
+        <div class="col-md-6 d-grid">
+            <button id="btn-add" class="btn btn-light menu-btn" onclick="verifierAcces('#addCanvas')">
+                <i class="fa fa-plus me-2"></i> Ajouter
+            </button>
+        </div>
+
+        <div class="col-md-6 d-grid">
+            <button id="btn-search" class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" data-bs-target="#searchCanvas">
+                <i class="fa fa-search me-2"></i> Rechercher
+            </button>
+        </div>
+
+        <div class="col-md-6 d-grid">
+            <button id="btn-edit" class="btn btn-primary menu-btn" onclick="verifierAcces('#editCanvas')">
+                <i class="fa fa-edit me-2"></i> Modifier
+            </button>
+        </div>
+
+        <div class="col-md-6 d-grid">
+            <button id="btn-delete" class="btn btn-danger menu-btn" onclick="verifierAcces('#deleteCanvas')">
+                <i class="fa fa-trash me-2"></i> Supprimer
+            </button>
+        </div>
+
+        <div class="col-md-6 d-grid">
+            <button id="btn-all" class="btn btn-dark menu-btn" data-bs-toggle="offcanvas" data-bs-target="#allCanvas" onclick="afficherTous()">
+                <i class="fa fa-list me-2"></i> Afficher Tous
+            </button>
+        </div>
+
+        <div class="col-md-6 d-grid">
+            <button id="btn-profile" class="btn btn-secondary menu-btn" onclick="ouvrirChangementProfil()">
+                <i class="fa fa-user-gear me-2"></i> Changer le profil
+            </button>
+        </div>
+    </div>
+
+    <!-- Message indiquant le profil connecté avec badge -->
+    <div class="profile-status text-white">
+        <i class="fa fa-circle-info me-1"></i> Vous êtes connecté en tant que : 
+        <span id="profilConnecteLabel">Utilisateur</span>
+        <span id="profilBadge" class="user-badge">
+            <i class="fa fa-user me-1"></i>Accès limité
+        </span>
+    </div>
+</div>
+
+<footer>
+Créé par : <strong>M.Seddik Elidrissi</strong>
+</footer>
+
+<div class="offcanvas offcanvas-top" id="addCanvas">
+    <div class="offcanvas-header bg-success text-white">
+        <h5 class="mb-0"><i class="fa fa-plus me-2"></i> Ajouter Article</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mx-auto" style="max-width: 600px;">
+            <input type="text" id="designation" class="form-control form-control-lg mb-3" placeholder="Désignation">
+            <input type="text" id="code" class="form-control form-control-lg mb-3" placeholder="Code Balance">
+            <div class="d-grid">
+                <button class="btn btn-success btn-lg" onclick="ajouterArticle()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-top" id="searchCanvas">
+    <div class="offcanvas-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fa fa-search me-2"></i> Rechercher</h5>
+        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mx-auto" style="max-width: 600px;">
+            <input type="text" id="searchInput" class="form-control form-control-lg mb-4" onkeyup="rechercher()" placeholder="Tapez la désignation...">
+            <div id="searchResult"></div>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-top" id="editCanvas">
+    <div class="offcanvas-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fa fa-edit me-2"></i> Modifier Article</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mx-auto" style="max-width: 600px;">
+            <div class="mb-3">
+                <label class="form-label fw-bold">1. Saisir la désignation exacte :</label>
+                <input type="text" id="editSearch" class="form-control form-control-lg mb-3" placeholder="Ex: Pomme">
+                <div class="d-grid">
+                    <button class="btn btn-primary btn-lg" onclick="chercherArticleModifier()">Rechercher</button>
+                </div>
+            </div>
+            <div id="editZone" style="display:none;" class="p-3 rounded bg-light text-dark mt-4 border">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nouvelle désignation :</label>
+                    <input type="text" id="newDes" class="form-control form-control-lg">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Nouveau Code :</label>
+                    <input type="text" id="newCode" class="form-control form-control-lg">
+                </div>
+                <div class="d-grid">
+                    <button class="btn btn-success btn-lg" onclick="validerModification()">Valider Modification</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-top" id="deleteCanvas">
+    <div class="offcanvas-header bg-danger text-white">
+        <h5 class="mb-0"><i class="fa fa-trash me-2"></i> Supprimer Article</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mx-auto" style="max-width: 600px;">
+            <div class="mb-3">
+                <label class="form-label fw-bold">1. Saisir la désignation exacte :</label>
+                <input type="text" id="deleteSearch" class="form-control form-control-lg mb-3" placeholder="Ex: Banane">
+                <div class="d-grid">
+                    <button class="btn btn-danger btn-lg" onclick="chercherArticleSupprimer()">Rechercher</button>
+                </div>
+            </div>
+            <div id="deleteZone" style="display:none;" class="mt-4">
+                <div class="alert alert-warning text-center fs-5 mb-4" id="deleteInfo"></div>
+                <div class="d-grid">
+                    <button class="btn btn-danger btn-lg" onclick="confirmerSuppression()">Confirmer Suppression</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-top" id="allCanvas">
+    <div class="offcanvas-header bg-dark text-white">
+        <h5 class="mb-0"><i class="fa fa-list me-2"></i> Liste des Articles</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mx-auto" style="max-width: 800px;">
+            <div class="table-responsive rounded shadow-sm bg-white text-dark border">
+                <table class="table table-bordered table-striped text-center mb-0">
+                    <thead>
+                        <tr><th>Désignation</th><th>Code</th></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEU3ETK7gEvdfHmNbkDsmloVkYTXmeb4-pe2FUsmzrWb_-Izi_iS9q3gN_ys7L1aqV/exec";
+
+let articles = [];
+let originalDesignationTemp = null; 
+let profilActuel = "user";
+
+// Fonction pour mettre à jour l'affichage du profil connecté avec badge
+function mettreAJourAffichageProfil() {
+    const profilLabel = document.getElementById("profilConnecteLabel");
+    const profilBadge = document.getElementById("profilBadge");
+    
+    if (profilLabel && profilBadge) {
+        if (profilActuel === "admin") {
+            profilLabel.innerHTML = "Administrateur";
+            profilLabel.style.color = "#ffd700";
+            profilBadge.innerHTML = '<i class="fa fa-user-shield me-1"></i>Accès complet';
+            profilBadge.className = "admin-badge";
+        } else {
+            profilLabel.innerHTML = "Utilisateur";
+            profilLabel.style.color = "#ffd700";
+            profilBadge.innerHTML = '<i class="fa fa-user me-1"></i>Accès limité';
+            profilBadge.className = "user-badge";
+        }
+    }
+}
+
+function showLoading(show) {
+    document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
+}
+
+// Fonction pour copier le texte
+function copierTexte(texte) {
+    navigator.clipboard.writeText(texte).then(() => {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Copié : ' + texte,
+            showConfirmButton: false,
+            timer: 1500
+        });
+    });
+}
+
+async function loadArticles() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        articles = await response.json();
+    } catch (error) {
+        console.error("Erreur de chargement :", error);
+        Swal.fire("Erreur", "Impossible de synchroniser avec le serveur", "error");
+    }
+}
+
+function choisirProfil(role) {
+    if (role === 'user') {
+        profilActuel = "user";
+        mettreAJourAffichageProfil();
+        basculerEcranApplication();
+    } else if (role === 'admin') {
+        Swal.fire({
+            title: "Authentification Admin",
+            html: "<p style='color:#a5a5a5; font-size:14px;'>Entrez le mot de passe</p>",
+            input: "password",
+            inputPlaceholder: "Mot de passe...",
+            showCancelButton: true,
+            confirmButtonText: "<i class='fa fa-unlock-keyhole me-1'></i> Valider",
+            cancelButtonText: "Annuler",
+            allowOutsideClick: false,
+            customClass: {
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title',
+                input: 'custom-swal-input',
+                confirmButton: 'custom-swal-confirm',
+                cancelButton: 'custom-swal-cancel'
+            }
+        }).then(result => {
+            if (result.value === "Seddik") {
+                profilActuel = "admin";
+                mettreAJourAffichageProfil();
+                basculerEcranApplication();
+            } else if (result.value !== undefined) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Accès refusé",
+                    text: "Mot de passe incorrect",
+                    customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' }
+                });
+            }
+        });
+    }
+}
+
+function verifierAcces(targetCanvasId) {
+    if (profilActuel === "admin") {
+        let myOffcanvas = new bootstrap.Offcanvas(document.querySelector(targetCanvasId));
+        myOffcanvas.show();
+    } else {
+        Swal.fire({
+            icon: "warning",
+            title: "Accès Restreint",
+            text: "Uniquement les admins peuvent utiliser ces boutons.",
+            customClass: {
+                popup: 'custom-swal-popup',
+                title: 'custom-swal-title'
+            },
+            confirmButtonColor: '#198754'
+        });
+    }
+}
+
+function basculerEcranApplication() {
+    document.getElementById("profileSelectionScreen").style.display = "none";
+    document.getElementById("mainApplicationScreen").style.display = "block";
+    mettreAJourAffichageProfil();
+}
+
+function ouvrirChangementProfil() {
+    document.getElementById("mainApplicationScreen").style.display = "none";
+    document.getElementById("profileSelectionScreen").style.display = "flex";
+}
+
+function resetAddFields() {
+    document.getElementById("designation").value = "";
+    document.getElementById("code").value = "";
+}
+
+function resetSearchFields() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("searchResult").innerHTML = "";
+}
+
+function resetEditFields() {
+    document.getElementById("editSearch").value = "";
+    document.getElementById("newDes").value = "";
+    document.getElementById("newCode").value = "";
+    document.getElementById("editZone").style.display = "none";
+    originalDesignationTemp = null;
+}
+
+function resetDeleteFields() {
+    document.getElementById("deleteSearch").value = "";
+    document.getElementById("deleteInfo").innerHTML = "";
+    document.getElementById("deleteZone").style.display = "none";
+    originalDesignationTemp = null;
+}
+
+async function ajouterArticle(){
+    let d = document.getElementById("designation").value.trim();
+    let c = document.getElementById("code").value.trim();
+    if(!d || !c){ Swal.fire("Erreur","Champs obligatoires","error"); return;}
+    
+    let designationExiste = articles.some(a => a.designation.toLowerCase() === d.toLowerCase());
+    if(designationExiste) {
+        Swal.fire("Doublon détecté", `L'article "${d}" existe déjà dans la base.`, "warning");
+        return;
+    }
+
+    let codeExiste = articles.find(a => a.code.toString() === c);
+    if(codeExiste) {
+        Swal.fire("Code déjà attribué", `Le code "${c}" est déjà utilisé par l'article : "${codeExiste.designation}".`, "warning");
+        return;
+    }
+
+    showLoading(true);
+    try {
+        const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "add", designation: d, code: c })
+        });
+        const result = await res.json();
+        
+        if(result.status === "success") {
+            await loadArticles();
+            Swal.fire("Succès","Article ajouté dans le cloud","success").then(() => {
+                resetAddFields();
+                let offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('addCanvas'));
+                if(offcanvas) offcanvas.hide();
+            });
+        }
+    } catch (error) {
+        Swal.fire("Erreur", "Sauvegarde échouée", "error");
+    } finally {
+        showLoading(false);
+    }
+}
+
+function rechercher(){
+    let val = document.getElementById("searchInput").value.toLowerCase();
+    if(val === "") {
+        document.getElementById("searchResult").innerHTML = "";
+        return;
+    }
+    let result = "";
+    articles.forEach(a => {
+        if(a.designation.toLowerCase().includes(val)){
+            result += `<div class="alert alert-success d-flex justify-content-between align-items-center">
+                        <span>${a.designation} - ${a.code}</span>
+                        <button class="btn btn-sm btn-outline-success" onclick="copierTexte('${a.designation}')">
+                            <i class="fa fa-copy"></i>
+                        </button>
+                       </div>`;
+        }
+    });
+    document.getElementById("searchResult").innerHTML = result || "<div class='alert alert-warning'>Aucun résultat</div>";
+}
+
+function chercherArticleModifier(){
+    let val = document.getElementById("editSearch").value.toLowerCase().trim();
+    if(!val) { Swal.fire("Erreur","Veuillez saisir une désignation","error"); return; }
+    
+    let art = articles.find(a => a.designation.toLowerCase() === val);
+    if(art){
+        document.getElementById("editZone").style.display = "block";
+        document.getElementById("newDes").value = art.designation;
+        document.getElementById("newCode").value = art.code;
+        originalDesignationTemp = art.designation;
+    } else {
+        Swal.fire("Article introuvable","","error");
+    }
+}
+
+async function validerModification(){
+    if(!originalDesignationTemp) return;
+    let newDes = document.getElementById("newDes").value.trim();
+    let newCode = document.getElementById("newCode").value.trim();
+    if(!newDes || !newCode) { Swal.fire("Erreur","Tous les champs sont obligatoires","error"); return; }
+    
+    if(newDes.toLowerCase() !== originalDesignationTemp.toLowerCase()) {
+        let designationExiste = articles.some(a => a.designation.toLowerCase() === newDes.toLowerCase());
+        if(designationExiste) {
+            Swal.fire("Doublon détecté", `La désignation "${newDes}" existe déjà.`, "warning");
+            return;
+        }
+    }
+
+    let articleActuel = articles.find(a => a.designation.toLowerCase() === originalDesignationTemp.toLowerCase());
+    if(articleActuel && newCode !== articleActuel.code) {
+        let codeExiste = articles.find(a => a.code.toString() === newCode);
+        if(codeExiste) {
+            Swal.fire("Code déjà attribué", `Le code "${newCode}" est déjà utilisé par l'article : "${codeExiste.designation}".`, "warning");
+            return;
+        }
+    }
+
+    showLoading(true);
+    try {
+        const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ 
+                action: "update", 
+                oldDesignation: originalDesignationTemp, 
+                newDesignation: newDes, 
+                newCode: newCode 
+            })
+        });
+        const result = await res.json();
+        if(result.status === "success") {
+            await loadArticles();
+            Swal.fire("Modification réussie","","success").then(() => {
+                resetEditFields();
+                let offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('editCanvas'));
+                if(offcanvas) offcanvas.hide();
+            });
+        }
+    } catch(e) {
+        Swal.fire("Erreur lors de la modification","","error");
+    } finally {
+        showLoading(false);
+    }
+}
+
+function chercherArticleSupprimer(){
+    let val = document.getElementById("deleteSearch").value.toLowerCase().trim();
+    if(!val) { Swal.fire("Erreur","Veuillez saisir une désignation","error"); return; }
+    
+    let art = articles.find(a => a.designation.toLowerCase() === val);
+    if(art){
+        document.getElementById("deleteZone").style.display = "block";
+        document.getElementById("deleteInfo").innerHTML = `<strong>${art.designation}</strong> - Code : ${art.code}`;
+        originalDesignationTemp = art.designation;
+    } else {
+        Swal.fire("Article introuvable","","error");
+    }
+}
+
+async function confirmerSuppression(){
+    if(!originalDesignationTemp) return;
+    
+    showLoading(true);
+    try {
+        const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "delete", designation: originalDesignationTemp })
+        });
+        const result = await res.json();
+        if(result.status === "success") {
+            await loadArticles();
+            Swal.fire("Article supprimé","","success").then(() => {
+                resetDeleteFields();
+                let offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('deleteCanvas'));
+                if(offcanvas) offcanvas.hide();
+            });
+        }
+    } catch(e) {
+        Swal.fire("Erreur lors de la suppression","","error");
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function afficherTous(){
+    showLoading(true);
+    await loadArticles();
+    showLoading(false);
+    
+    let table = "";
+    if(articles.length === 0) {
+        table = "<tr><td colspan='2' class='text-center'>Aucun article</td></tr>";
+    } else {
+        articles.forEach(a => {
+            table += `<tr><td>${a.designation}</td><td>${a.code}</td></tr>`;
+        });
+    }
+    document.getElementById("tableBody").innerHTML = table;
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    showLoading(true);
+    await loadArticles(); 
+    showLoading(false);
+    
+    document.getElementById("profileSelectionScreen").style.display = "flex";
+    mettreAJourAffichageProfil();
+
+    document.getElementById('addCanvas').addEventListener('hidden.bs.offcanvas', resetAddFields);
+    document.getElementById('searchCanvas').addEventListener('hidden.bs.offcanvas', resetSearchFields);
+    document.getElementById('editCanvas').addEventListener('hidden.bs.offcanvas', resetEditFields);
+    document.getElementById('deleteCanvas').addEventListener('hidden.bs.offcanvas', resetDeleteFields);
+    document.getElementById('allCanvas').addEventListener('hidden.bs.offcanvas', () => {
+        document.getElementById("tableBody").innerHTML = "";
+    });
+});
+</script>
+</body>
+</html>
