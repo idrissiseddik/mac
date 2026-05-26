@@ -94,15 +94,47 @@ body {
     }
 }
 
-/* Icône animée */
-.animated-icon {
-    font-size: 70px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: pulse 2s infinite;
+/* Conteneur des deux icônes */
+.double-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
     margin-bottom: 20px;
+}
+
+/* Style pour chaque icône */
+.icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.icon-circle i {
+    font-size: 35px;
+    color: white;
+}
+
+.icon-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(102, 126, 234, 0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: #667eea;
 }
 
 @keyframes pulse {
@@ -111,13 +143,22 @@ body {
         opacity: 0.8;
     }
     50% {
-        transform: scale(1.1);
+        transform: scale(1.05);
         opacity: 1;
     }
     100% {
         transform: scale(1);
         opacity: 0.8;
     }
+}
+
+/* Animation différenciée pour les deux icônes */
+.icon-wrapper:first-child .icon-circle {
+    animation-delay: 0s;
+}
+
+.icon-wrapper:last-child .icon-circle {
+    animation-delay: 0.5s;
 }
 
 /* Titre */
@@ -137,6 +178,18 @@ body {
     font-size: 1rem;
     margin-bottom: 30px;
     line-height: 1.6;
+}
+
+.welcome-text .greeting {
+    font-weight: 700;
+    color: #667eea;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.welcome-text .description {
+    display: block;
 }
 
 /* Boutons */
@@ -191,15 +244,6 @@ body {
 .btn-article i, .btn-balance i {
     margin-right: 12px;
     font-size: 1.2rem;
-}
-
-/* Effet de survol des cartes de boutons */
-.card-hover {
-    transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-    transform: translateY(-5px);
 }
 
 /* Footer */
@@ -258,13 +302,34 @@ body {
         font-size: 1rem;
     }
     
-    .animated-icon {
-        font-size: 55px;
+    .icon-circle {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .icon-circle i {
+        font-size: 28px;
+    }
+    
+    .icon-label {
+        font-size: 0.65rem;
+    }
+    
+    .double-icons {
+        gap: 20px;
     }
     
     .custom-footer {
         font-size: 0.7rem;
         padding: 8px;
+    }
+    
+    .welcome-text .greeting {
+        font-size: 1rem;
+    }
+    
+    .welcome-text .description {
+        font-size: 0.9rem;
     }
 }
 
@@ -331,34 +396,35 @@ body {
     }
 }
 
-/* Badge nouveau */
-.badge-new {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: #ff4757;
-    color: white;
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    animation: bounce 1s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
 /* Effet de glassmorphism sur la carte */
 .glass-effect {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Animation d'entrée pour les icônes */
+.icon-wrapper {
+    animation: fadeInScale 0.6s ease-out both;
+}
+
+.icon-wrapper:first-child {
+    animation-delay: 0.1s;
+}
+
+.icon-wrapper:last-child {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 </style>
 </head>
@@ -370,18 +436,34 @@ body {
 <div class="container-main">
     <div class="welcome-card glass-effect">
         <div class="text-center">
-            <!-- Icône animée -->
-            <div class="animated-icon">
-                <i class="fa-solid fa-qrcode"></i>
+            <!-- Deux icônes au lieu d'une -->
+            <div class="double-icons">
+                <div class="icon-wrapper">
+                    <div class="icon-circle">
+                        <i class="fa-solid fa-barcode"></i>
+                    </div>
+                    <span class="icon-label">Code Article</span>
+                </div>
+                <div class="icon-wrapper">
+                    <div class="icon-circle">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <span class="icon-label">Code Balance</span>
+                </div>
             </div>
             
             <!-- Titre avec animation typing -->
             <h1 class="main-title typing-text">Mon Assistant Codes</h1>
             
-            <!-- Message de bienvenue -->
+            <!-- Message de bienvenue avec retour à la ligne après Bienvenue ! -->
             <p class="welcome-text">
-                <i class="fa-regular fa-hand-peace me-2"></i>
-                Bienvenue ! Gérez facilement vos codes articles et codes balance (PLU) en quelques clics.
+                <span class="greeting">
+                    <i class="fa-regular fa-hand-peace me-2"></i>
+                    Bienvenue !
+                </span>
+                <span class="description">
+                    Gérez facilement vos codes articles et codes balance (PLU) en quelques clics.
+                </span>
             </p>
             
             <!-- Ligne décorative -->
@@ -391,18 +473,18 @@ body {
                 <span class="badge bg-warning rounded-pill">✓ Efficace</span>
             </div>
             
-            <!-- Boutons avec les nouveaux liens -->
+            <!-- Boutons avec les liens Vercel -->
             <div class="d-grid gap-3">
                 <div class="position-relative">
                     <a href="https://ca159.vercel.app" class="btn btn-custom btn-article w-100" target="_blank">
-                        <i class="fa-solid fa-box-open"></i>
+                        <i class="fa-solid fa-barcode"></i>
                         Recherche Code Article
                     </a>
                 </div>
                 
                 <div class="position-relative">
                     <a href="http://cb159.vercel.app" class="btn btn-custom btn-balance w-100" target="_blank">
-                        <i class="fa-solid fa-apple-whole"></i>
+                        <i class="fa-solid fa-scale-balanced"></i>
                         Recherche Code Balance (PLU)
                     </a>
                 </div>
@@ -513,15 +595,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Les événements de clic pour les nouveaux liens
-document.querySelector('a[href="https://ca159.vercel.app"]').addEventListener('click', function(e) {
-    console.log('Navigation vers Mon Assistant Codes Article (https://ca159.vercel.app)');
-});
-
-document.querySelector('a[href="http://cb159.vercel.app"]').addEventListener('click', function(e) {
-    console.log('Navigation vers Mon Assistant Codes Balance (http://cb159.vercel.app)');
-});
 </script>
 
 </body>
