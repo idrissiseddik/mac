@@ -391,17 +391,17 @@ body {
                 <span class="badge bg-warning rounded-pill">✓ Efficace</span>
             </div>
             
-            <!-- Boutons -->
+            <!-- Boutons avec les nouveaux liens -->
             <div class="d-grid gap-3">
                 <div class="position-relative">
-                    <a href="ca.html" class="btn btn-custom btn-article w-100">
+                    <a href="https://ca159.vercel.app" class="btn btn-custom btn-article w-100" target="_blank">
                         <i class="fa-solid fa-box-open"></i>
                         Recherche Code Article
                     </a>
                 </div>
                 
                 <div class="position-relative">
-                    <a href="cb.html" class="btn btn-custom btn-balance w-100">
+                    <a href="http://cb159.vercel.app" class="btn btn-custom btn-balance w-100" target="_blank">
                         <i class="fa-solid fa-apple-whole"></i>
                         Recherche Code Balance (PLU)
                     </a>
@@ -514,15 +514,13 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Vérifier si les fichiers ca.html et cb.html existent
-// (optionnel : afficher un message si les fichiers ne sont pas trouvés)
-document.querySelector('a[href="ca.html"]').addEventListener('click', function(e) {
-    // Simple vérification - les navigateurs gèrent déjà l'erreur 404
-    console.log('Navigation vers Mon Assistant Codes Article');
+// Les événements de clic pour les nouveaux liens
+document.querySelector('a[href="https://ca159.vercel.app"]').addEventListener('click', function(e) {
+    console.log('Navigation vers Mon Assistant Codes Article (https://ca159.vercel.app)');
 });
 
-document.querySelector('a[href="cb.html"]').addEventListener('click', function(e) {
-    console.log('Navigation vers Mon Assistant Codes Balance');
+document.querySelector('a[href="http://cb159.vercel.app"]').addEventListener('click', function(e) {
+    console.log('Navigation vers Mon Assistant Codes Balance (http://cb159.vercel.app)');
 });
 </script>
 
